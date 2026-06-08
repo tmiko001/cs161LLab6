@@ -1,30 +1,31 @@
 # Lab 6 - Caches Lab Report
-**Name:** [Student Name]
-**Email:** [Student Email]
-
-## Configuration Analysis
-In this lab, I examined various cache configurations across different executables to evaluate the tradeoff between performance (miss rate) and hardware cost.
+**Name:** [Thomas Miko]
+**Email:** [tmiko001@ucr.edu]
 
 ### Chosen Configurations & Justification
-From the generated statistics, we observed that increasing both the cache size and the associativity generally leads to lower miss rates. For example, in the `matrix-mul-row-major` executable with an LRU replacement policy, the miss rate drops significantly as cache size increases from 1024 bytes up to 16384 bytes. 
+Overall from the tests, it was shown that increasing both the cache size and the associativity leads to lower miss rates. \
+This trend was true for all example programs however the speed of increases was different acrross programs.
 
-Increasing associativity from 1 (Direct Mapped) to 2, 4, and 8 ways also shows a diminishing return in miss rate reduction. A 4-way set associative cache often presents the best balance:
-* **Performance:** It significantly reduces conflict misses compared to a direct-mapped cache, often performing very close to an 8-way set associative cache.
-* **Cost:** Hardware cost (comparators, multiplexers, and routing logic) scales linearly with associativity. An 8-way cache requires double the parallel tag checks and routing complexity of a 4-way cache, often making the slight improvement in miss rate not worth the extra area, power, and access time overhead. 
+Addtionally, increasing associativity decreased the miss rates. \
+However they showed a diminishing return in miss rate reduction. A 4-way set associative showed the best change in performance before dropping off
 
-Therefore, a **4096-byte or 8192-byte 4-way set-associative cache with LRU replacement** provides an excellent "sweet spot" for general workloads, minimizing the penalty of frequent cache misses without overcommitting die space to logic gates.
+Because hardware cost scales linearly with associativity, an 8-way cache requiring double the hardware of a 4-way cache woudn't make much sense for some applications. For example, a cpu on a personal computer would not see as much return on investment for doubling the price of the cache. However on a computer used constantly for consuming calculations (like matrix multiplication) the price of the cache might make sense in the long run.
+
+In my opinion, a 4096-byte 4-way set-associative cache with LRU replacement is a good sweet spot for general purposes.
 
 ## Performance Chart
 
-Below is the plot tracking the miss rate across different cache sizes and associativity levels for the `matrix-mul-row-major` unified cache using the LRU replacement policy.
+Below is the plot tracking the miss rate across different cache sizes and associativity levels for the matrix-mul-row-major, matrix-mul-col-major, hello_c, hello_cpp unified cache using the LRU and FIFO replacement policy.
 
-![Miss Rate vs Cache Size](assets\hello_c.png)
+![Miss Rate vs Cache Size](assets/matrix_row.png)
+![Miss Rate vs Cache Size](assets/matrix_col.png)
+![Miss Rate vs Cache Size](assets/hello_c.png)
+![Miss Rate vs Cache Size](assets/hello_cpp.png)
+
 
 ## Observations Across Executables
-When observing the 4 distinct executables (`hello_c`, `hello_cpp`, `matrix-mul-row-major`, `matrix-mul-col-major`), several themes emerge:
 
-1.  **Spatial Locality Matters:** The most striking difference is between `matrix-mul-row-major` and `matrix-mul-col-major`. In C/C++, matrices are stored in row-major order. Consequently, the row-major multiplication accesses memory sequentially, taking full advantage of cache blocks (high spatial locality). The column-major multiplication strides through memory, heavily polluting the cache and resulting in a much higher miss rate, even at larger cache sizes.
-2.  **Instruction Cache vs Data Cache:** For the "Hello World" programs (`hello_c` and `hello_cpp`), the instruction cache accounts for a significant portion of memory accesses compared to the data cache. While both program types are simple, C++ often has a larger instruction footprint due to the standard library streams and runtime setup, resulting in longer initial memory traces and slightly varied cache warm-up behavior.
-3.  **Diminishing Returns on LRU vs FIFO:** Across most executables, LRU slightly outperforms FIFO, especially in higher associativity caches. However, the margin is often small, meaning for highly cost-constrained embedded systems, FIFO might be a reasonable alternative to save state bits.
+1.  **Spatial Locality:** Because of how matrices are stored in ram, there is a difference in how column and row major performed in the tests Because c stores them in row major, this executable was able to use alrger caches much more effectively. 
+2.  **Diminishing Returns on LRU vs FIFO:** Across most executables, LRU slightly outperforms FIFO. However, the differences are very small. In addition, as the cache size gets bigger, the number of misses stops decreasing as fast. As a result the difference between the two grows even smaller.
 
-Overall, the common theme is that **algorithm design (software) heavily dictates cache performance**. Even an optimally configured 16KB 8-way cache cannot fully compensate for the poor spatial locality of the column-major traversal.
+
