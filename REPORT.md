@@ -18,7 +18,7 @@ Therefore, a **4096-byte or 8192-byte 4-way set-associative cache with LRU repla
 
 Below is the plot tracking the miss rate across different cache sizes and associativity levels for the `matrix-mul-row-major` unified cache using the LRU replacement policy.
 
-![Miss Rate vs Cache Size](cache_miss_rate.png)
+![Miss Rate vs Cache Size](assets\hello_c.png)
 
 ## Observations Across Executables
 When observing the 4 distinct executables (`hello_c`, `hello_cpp`, `matrix-mul-row-major`, `matrix-mul-col-major`), several themes emerge:
