@@ -1,8 +1,8 @@
 `timescale 1ns / 1ps
 //=========================================================================
 // Name & Email must be EXACTLY as in Gradescope roster!
-// Name: 
-// Email: 
+// Name: Thomas Miko
+// Email: tmiko001@ucr.edu
 // 
 // Assignment name: 
 // Lab section: 
